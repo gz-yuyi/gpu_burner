@@ -2,6 +2,43 @@
 
 一个用于维持GPU利用率的Python程序，可以防止GPU服务器因利用率过低而被回收。
 
+## 快速开始 - Docker部署
+
+### 1. 拉取镜像
+
+```bash
+# 从阿里云容器镜像仓库拉取
+docker pull crpi-lxfoqbwevmx9mc1q.cn-chengdu.personal.cr.aliyuncs.com/yuyi_tech/gpu_burner:latest
+```
+
+### 2. 运行容器
+
+```bash
+# 使用docker-compose运行
+docker-compose up -d
+
+# 或者直接使用docker命令运行
+docker run -d \
+  --name gpu-burner \
+  --gpus all \
+  -v $(pwd)/config.yaml:/app/config.yaml:ro \
+  -v $(pwd)/logs:/app/logs \
+  crpi-lxfoqbwevmx9mc1q.cn-chengdu.personal.cr.aliyuncs.com/yuyi_tech/gpu_burner:latest
+```
+
+### 3. Docker常用命令
+
+```bash
+# 查看容器日志
+docker logs -f gpu-burner
+
+# 进入容器内部
+docker exec -it gpu-burner /bin/bash
+
+# 停止并删除容器
+docker stop gpu-burner && docker rm gpu-burner
+```
+
 ## 功能特性
 
 - **实时监控**: 实时监控指定GPU的利用率
@@ -10,7 +47,7 @@
 - **灵活配置**: 通过配置文件设置各种参数
 - **智能工作负载**: 使用矩阵运算产生真实的GPU负载
 
-## 安装依赖
+## 本地安装依赖
 
 ```bash
 pip install -r requirements.txt
@@ -110,7 +147,7 @@ python gpu_burner.py --test-gpu
 - Docker (可选，用于容器化部署)
 - NVIDIA Container Toolkit (Docker GPU支持)
 
-## Docker部署
+## Docker部署详细说明
 
 ### 1. 安装NVIDIA Container Toolkit
 
@@ -124,36 +161,35 @@ sudo apt-get update && sudo apt-get install -y nvidia-docker2
 sudo systemctl restart docker
 ```
 
-### 2. 快速启动
+### 2. 使用预构建镜像
 
 ```bash
-# 使用docker-compose
-docker-compose up -d
-
-# 或者直接使用docker命令
-docker build -t gpu-burner:latest .
-docker run -d --name gpu-burner --gpus all -v $(pwd)/config.yaml:/app/config.yaml:ro gpu-burner:latest
-```
-
-### 3. Docker命令示例
-
-```bash
-# 构建镜像
-docker build -t gpu-burner:latest .
-
-# 运行容器
+# 直接拉取并运行
 docker run -d \
   --name gpu-burner \
   --gpus all \
   -v $(pwd)/config.yaml:/app/config.yaml:ro \
   -v $(pwd)/logs:/app/logs \
-  gpu-burner:latest
+  crpi-lxfoqbwevmx9mc1q.cn-chengdu.personal.cr.aliyuncs.com/yuyi_tech/gpu_burner:latest
+```
 
-# 查看日志
-docker logs -f gpu-burner
+### 3. 本地构建（可选）
 
-# 进入容器
-docker exec -it gpu-burner /bin/bash
+```bash
+# 克隆代码
+git clone <your-repo-url>
+cd gpu_burner
+
+# 构建镜像
+docker build -t gpu-burner:local .
+
+# 运行本地构建的镜像
+docker run -d \
+  --name gpu-burner-local \
+  --gpus all \
+  -v $(pwd)/config.yaml:/app/config.yaml:ro \
+  -v $(pwd)/logs:/app/logs \
+  gpu-burner:local
 ```
 
 ## 注意事项
