@@ -1,0 +1,69 @@
+version: '3.8'
+
+services:
+  gpu-burner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpu-burner
+    image: gpu-burner:latest
+    # 使用GPU设备
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              # 指定要使用的GPU设备，all表示所有GPU
+              device_ids: ['all']
+              # 可选：指定GPU能力
+              capabilities: [gpu]
+    # 环境变量
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all  # 显示所有GPU
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility  # 启用计算能力
+    # 卷挂载
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro  # 只读挂载配置文件
+      - ./logs:/app/logs  # 日志目录
+    # 端口映射（如果添加Web界面）
+    ports:
+      - "8080:8080"
+    # 重启策略
+    restart: unless-stopped
+    # 健康检查
+    healthcheck:
+      test: ["CMD", "python", "-c", "import pynvml; pynvml.nvmlInit(); print('GPU OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # 可选：添加Prometheus监控
+  # prometheus:
+  #   image: prom/prometheus:latest
+  #   container_name: gpu-burner-prometheus
+  #   ports:
+  #     - "9090:9090"
+  #   volumes:
+  #     - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+  #   command:
+  #     - '--config.file=/etc/prometheus/prometheus.yml'
+  #     - '--storage.tsdb.path=/prometheus'
+  #     - '--web.console.libraries=/etc/prometheus/console_libraries'
+  #     - '--web.console.templates=/etc/prometheus/consoles'
+  #   restart: unless-stopped
+
+  # 可选：添加Grafana仪表板
+  # grafana:
+  #   image: grafana/grafana:latest
+  #   container_name: gpu-burner-grafana
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - GF_SECURITY_ADMIN_PASSWORD=admin  # 请修改密码
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #   restart: unless-stopped
+
+# volumes:
+#   grafana-storage:

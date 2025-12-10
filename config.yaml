@@ -1,0 +1,27 @@
+# GPU Burner 配置文件
+
+# 目标GPU设备ID列表 (例如: [0, 1, 2] 表示前三块GPU)
+target_gpus: [0]
+
+# GPU利用率阈值 (百分比)
+utilization_threshold: 50
+
+# 检查间隔 (秒)
+check_interval: 5
+
+# 负载调整参数
+workload:
+  # 基础工作负载强度 (0.1-1.0)
+  base_intensity: 0.5
+  # 最大工作负载强度 (0.1-1.0)
+  max_intensity: 0.9
+  # 矩阵大小 (用于GPU计算)
+  matrix_size: 2048
+  # 每次计算的批次数量
+  batch_size: 10
+
+# 日志配置
+logging:
+  level: INFO
+  file: gpu_burner.log
+
