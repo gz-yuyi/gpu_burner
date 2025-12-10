@@ -2,7 +2,7 @@
 # 基于NVIDIA官方CUDA镜像构建，支持GPU计算
 
 # 使用多阶段构建优化镜像大小
-FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04 as builder
+FROM nvidia/cuda:11.8.0-runtime-ubuntu22.04 AS builder
 
 # 设置环境变量
 ENV DEBIAN_FRONTEND=noninteractive
