@@ -223,7 +223,7 @@ class WorkloadGenerator:
 class MultiGPUWorkloadManager:
     """多GPU工作负载管理器"""
 
-    def __init__(self, config: Dict):
+    def __init__(self, config: Dict, target_gpus):
         """
         初始化多GPU工作负载管理器
 
@@ -231,7 +231,7 @@ class MultiGPUWorkloadManager:
             config: 配置字典
         """
         self.config = config
-        self.target_gpus = config.get("target_gpus", [0])
+        self.target_gpus = target_gpus
         self.workload_generators: Dict[int, WorkloadGenerator] = {}
 
         # 为每个目标GPU创建工作负载生成器
@@ -292,4 +292,3 @@ class MultiGPUWorkloadManager:
         self.stop_workloads()
         for generator in self.workload_generators.values():
             generator.cleanup()
-

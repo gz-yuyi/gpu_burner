@@ -105,7 +105,7 @@ class GPUBurner:
 
             # 初始化工作负载管理器
             self.workload_manager = MultiGPUWorkloadManager(
-                self.config.get_workload_config()
+                self.config.get_workload_config(), available_gpus
             )
 
             # 设置工作负载管理器的目标GPU
